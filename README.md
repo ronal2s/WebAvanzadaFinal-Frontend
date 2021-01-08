@@ -1,0 +1,62 @@
+# Proyecto Final de Programación Web Avanzada
+
+### Pasos
+1. Descargar el jar de H2 (Base de datos)
+
+```shell script
+wget https://repo1.maven.org/maven2/com/h2database/h2/1.4.197/h2-1.4.197.jar
+cp h2-1.4.197.jar h2.jar
+
+# Ejecutar la base de datos 3 veces cambiandos los puertos 
+
+# Microservicio de Usuarios - 9092
+java \
+   -cp ./h2.jar \
+   org.h2.tools.Server \
+   -web -webDaemon -webAllowOthers -webPort 8082 \
+   -tcp -tcpAllowOthers -tcpPort 9092 \
+   -baseDir ${PWD} &
+
+# Microservicios de Compra - 9093
+java \
+   -cp ./h2.jar \
+   org.h2.tools.Server \
+   -web -webDaemon -webAllowOthers -webPort 8083 \
+   -tcp -tcpAllowOthers -tcpPort 9093 \
+   -baseDir ${PWD} &
+
+# Microservicio de notificaciones - 9094
+java \
+   -cp ./h2.jar \
+   org.h2.tools.Server \
+   -web -webDaemon -webAllowOthers -webPort 8084 \
+   -tcp -tcpAllowOthers -tcpPort 9094 \
+   -baseDir ${PWD} &
+```
+
+2. Correr el main de servidor-config. 
+3. Correr el main de Eureka. 
+4. Correr el main de Apigateway. 
+5. Correr los 3 microservicios.
+
+6. Para ejecutar el frontend hay que instalar las librerías en el archivo.
+
+`cd proyecto_final_frontend`
+
+`npm install && npm run start`
+
+7. Matar proceso 
+
+   ` ==> jobs`
+   ` ==> fg [process_number]`
+   ` ==> CTL+C`
+    
+
+
+
+
+
+
+
+
+

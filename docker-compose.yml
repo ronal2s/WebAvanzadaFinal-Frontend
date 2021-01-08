@@ -1,0 +1,108 @@
+version: "3"
+
+services:
+  h2-usuario:
+    container_name: h2-usuario
+    restart: always
+    build:
+      context: ./h2-docker
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+
+  h2-evento:
+    container_name: h2-evento
+    restart: always
+    build:
+      context: ./h2-docker
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+
+  h2-notificacion:
+    container_name: h2-notificacion
+    restart: always
+    build:
+      context: ./h2-docker
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+
+  servidor-configuracion:
+    container_name: servidor-configuracion
+    restart: always
+    build:
+      context: ./servidor-configuracion
+      dockerfile: Dockerfile
+    volumes:
+      - ./archivos-configuracion:/archivos-configuracion
+    env_file:
+      - .env
+    ports:
+    - 8888
+
+  servidor-eureka:
+    container_name: servidor-eureka
+    restart: always
+    build:
+      context: ./servidor-eureka
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+    - 8761
+    depends_on:
+      - servidor-configuracion
+
+  servidor-apigateway:
+    container_name: servidor-apigateway
+    restart: always
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - servidor-configuracion
+      - servidor-eureka
+
+  servidor-microusuario:
+    container_name: microservicio-usuario
+    restart: always
+    build:
+      context: ./microservicio-usuario
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - servidor-configuracion
+      - h2-usuario
+
+  servidor-eventos:
+    container_name: microservicio-eventos
+    restart: always
+    build:
+      context: ./compradeeventos
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - servidor-configuracion
+      - h2-evento
+
+  servidor-notificaciones:
+    container_name: notificaciones-microservicio
+    restart: always
+    build:
+      context: ./notificaciones-microservicio
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - servidor-configuracion
+      - h2-notificacion
+
+networks:
+  default:
+    external:
+      name: db-proyecto-final
